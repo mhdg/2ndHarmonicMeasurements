@@ -42,9 +42,9 @@ class Measure2ndHarmonic(Procedure):
     Lockin1_use = Parameter('Lock-in 1')
     Lockin2_use = Parameter('Lock-in 2')
     Lockin1_tc = FloatParameter(
-        'Lock-in 1 time-constant', units='ms', default=200)
+        'Lock-in 1 time-constant', units='s', default=0.2)
     Lockin2_tc = FloatParameter(
-        'Lock-in 2 time-constant', units='ms', default=200)
+        'Lock-in 2 time-constant', units='s', default=0.2)
     Lockin1_voltage = FloatParameter('Lock-in 1 voltage', units='V', default=0)
     Lockin2_voltage = FloatParameter('Lock-in 2 voltage', units='V', default=0)
 
@@ -192,7 +192,7 @@ class Measure2ndHarmonic(Procedure):
         self.motorstep = 0
 
         # Set the lockin voltage
-        self.ramp_to_voltage(self.lockin, self.voltage)
+        # self.ramp_to_voltage(self.lockin, self.voltage)
 
         # Read the properties of the lockins
         self.Lockin1_tc = self.lockin.time_constant
