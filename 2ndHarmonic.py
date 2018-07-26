@@ -25,6 +25,8 @@ log.addHandler(logging.NullHandler())
 
 class Measure2ndHarmonic(Procedure):
 
+    version = Parameter('Software Version', default="2.0.1")
+
     current = FloatParameter('Magnet Current',
                              units='A', default=1)
     delay = FloatParameter('Delay Time',
@@ -34,7 +36,7 @@ class Measure2ndHarmonic(Procedure):
     ramp_rate = FloatParameter('Magnet Ramping Rate',
                                units='A/s', default=0.1)
     fieldcal = FloatParameter('Magnetic Field Calibration',
-                              units='T/A', default=13.69)
+                              units='mT/A', default=13.69)
     Lockin1_use = Parameter('Lock-in 1')
     Lockin2_use = Parameter('Lock-in 2')
 
@@ -49,7 +51,7 @@ class Measure2ndHarmonic(Procedure):
     DATA_COLUMNS = [
         'Angle (deg)',
         'Magnet Current (A)',
-        'Magnetic Field (T)',
+        'Magnetic Field (mT)',
         'Lock-In 1 X (V)',
         'Lock-In 1 Y (V)',
         'Lock-In 2 X (V)',
@@ -135,7 +137,7 @@ class Measure2ndHarmonic(Procedure):
         data = {
             'Angle (deg)': self.calc_angle(),
             'Magnet Current (A)': self.current,
-            'Magnetic Field (T)': self.calc_magfield(),
+            'Magnetic Field (mT)': self.calc_magfield(),
             'Lock-In 1 X (V)': self.lockin.x,
             'Lock-In 1 Y (V)': self.lockin.y,
             'Lock-In 2 X (V)': self.lockin2.x,
