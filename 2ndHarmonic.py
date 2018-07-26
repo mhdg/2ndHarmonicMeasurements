@@ -35,8 +35,16 @@ class Measure2ndHarmonic(Procedure):
                                units='A/s', default=0.1)
     fieldcal = FloatParameter('Magnetic Field Calibration',
                               units='T/A', default=13.69)
+    voltage = FloatParameter('Lock-In voltage for measurement',
+                             units='V', default=1)
     Lockin1_use = Parameter('Lock-in 1')
     Lockin2_use = Parameter('Lock-in 2')
+    Lockin1_tc = FloatParameter(
+        'Lock-in 1 time-constant', units='ms', default=200)
+    Lockin2_tc = FloatParameter(
+        'Lock-in 2 time-constant', units='ms', default=200)
+    Lockin1_voltage = FloatParameter('Lock-in 1 voltage', units='V', default=0)
+    Lockin2_voltage = FloatParameter('Lock-in 2 voltage', units='V', default=0)
 
     # degrees per edge
     # it moves at degpulse at both the rise and fall of a pulse
@@ -130,6 +138,16 @@ class Measure2ndHarmonic(Procedure):
     def calc_magfield(self):
         return self.current * self.fieldcal
 
+    def ramp_to_voltage(lockin, target_voltage, ramp_steps=0.01, delay=0.1):
+        log.info("Ramping lock-in voltage from {:4.2f} V to {:4.2f} V".format(
+            lockin.voltage, target_voltage))
+        if not lockin.voltage == target_voltage:
+            voltages = np.arange(lockin.voltage, target_voltage, ramp_steps)
+            for voltage in voltages:
+                lockin.voltage = voltage
+                sleep(delay)
+            lockin.voltage = target_voltage
+
     def measure(self):
         log.debug("Measuring angle: %g deg." % self.calc_angle())
         data = {
@@ -170,6 +188,15 @@ class Measure2ndHarmonic(Procedure):
 
         # Number of motor steps is initially zero.
         self.motorstep = 0
+
+        # Set the lockin voltage
+        self.ramp_to_voltage(self.lockin, self.voltage)
+
+        # Read the properties of the lockins
+        self.Lockin1_tc = self.lockin.time_constant
+        self.Lockin2_tc = self.lockin2.time_constant
+        self.Lockin1_voltage = self.lockin.voltage
+        self.Lockin2_voltage = self.lockin2.voltage
 
         """
         #############################      CLOCKWISE      ####################
